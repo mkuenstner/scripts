@@ -1,0 +1,32 @@
+#!/bin/bash
+
+appname=$1
+server="192.168.240.11"
+port=8125
+sampleRate=1
+prefix="servers.apache.${appname}."
+
+while IFS='|'; read -ra data; do
+  for metrics in ${data[*]}
+  do
+    IFS=' '; metric=(${metrics/:/ })
+
+    case "${metric[0]}" in
+        "msec")
+            msg="${prefix}${metric[0]}:${metric[1]}|ms"
+            ;;
+        "bytes")
+            msg="${prefix}${metric[0]}:${metric[1]}|c"
+            ;;
+        "status")
+            msg="${prefix}${metric[0]}.${metric[1]}:1|c"
+            ;;
+        *)
+            msg="${prefix}${metric[0]}:1|c"
+            ;;
+    esac
+
+    echo "${msg}|@${sampleRate}" | nc -w 0 -u $server $port
+  done
+
+done
