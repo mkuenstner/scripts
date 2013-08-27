@@ -1,7 +1,11 @@
+/* font for xdebug */
+.xdebug-error, .xdebug-var-dump {
+    font: normal 8pt/1.1em "Source Code Pro", "Courier new", Courier, "Andale Mono", monospace;
+    }
+
 /* xdebug errors, a bit more beautiful */
 /* table */
 .xdebug-error {
-    font: normal 8pt/1.1em "Source Code Pro", "Courier new", Courier, "Andale Mono", monospace;
     color: #2c3e50;
     border-collapse: collapse;
     border-color: transparent!important;
@@ -26,4 +30,35 @@
 .xdebug-error tbody tr:first-child th:first-child span:first-child,
 .xdebug-error tbody tr:nth-child(2) th {
     display: none;
+    }
+
+/* xdebug var_dumps */
+.xdebug-var-dump {
+    background: #ecf0f1;
+    padding: 0.1em 0.5em 0.3em 0.7em;
+    border-left: 11px solid #1abc9c;
+    margin: 1.7em 0 1.7em 0.3em;
+    overflow: auto;
+    width: 93%;
+    color: #34495e;
+    }
+*:first-child+html .xdebug-var-dump {
+    padding-bottom: 2em;
+    overflow-y: hidden;
+    overflow: visible;
+    overflow-x: auto;
+    }
+* html pre.xdebug-var-dump {
+    padding-bottom: 2em;
+    overflow: visible;
+    overflow-x: auto;
+    }
+.xdebug-var-dump font[color="#cc0000"] {
+    color: #e74c3c!important;
+    }
+.xdebug-var-dump font[color="#4e9a06"] {
+    color: #27ae60!important;
+    }
+.xdebug-var-dump font[color="#888a85"] {
+    color: #7f8c8d!important;
     }
