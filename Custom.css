@@ -1,0 +1,29 @@
+/* xdebug errors, a bit more beautiful */
+/* table */
+.xdebug-error {
+    font: normal 8pt/1.1em "Source Code Pro", "Courier new", Courier, "Andale Mono", monospace;
+    color: #2c3e50;
+    border-collapse: collapse;
+    border-color: transparent!important;
+    border-spacing: 0;
+    text-align: left;
+    }
+/* border left */
+.xdebug-error tbody {
+    border-left: 11px solid #e74c3c!important;
+    }
+/* content */
+.xdebug-error th, .xdebug-error td {
+    padding: .4em!important;
+    background: #ecf0f1!important;
+    }
+/* error message */
+.xdebug-error tbody tr:first-child th:first-child {
+    background: #7f8c8d!important;
+    color: #ecf0f1!important;
+    }
+/* ( ! ) and call stack */
+.xdebug-error tbody tr:first-child th:first-child span:first-child,
+.xdebug-error tbody tr:nth-child(2) th {
+    display: none;
+    }

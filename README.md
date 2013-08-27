@@ -1,7 +1,7 @@
 scripts
 =======
 
-helper/tool scripts
+helper, tool, scripts
 
 apache-statsd
 -------------
@@ -11,4 +11,13 @@ Add the following lines to any vhost configuration:
 ```
 LogFormat "bytes:%B|msec:%D|method:%m|status:%s|requests:1" apache-statsd-log
 CustomLog "|/path/to/apache-statsd appname" apache-statsd-log
+```
+
+Custom.css
+----------
+user stylesheet for modern browser, with some better styling for [xdebug](https://github.com/xdebug/xdebug) errors.
+
+**Chrome**
+```
+~/Library/Application\ Support/Google/Chrome/Default/User\ StyleSheets/Custom.css
 ```
