@@ -21,3 +21,11 @@ user stylesheet for modern browser, with some better styling for [xdebug](https:
 ```
 ~/Library/Application\ Support/Google/Chrome/Default/User\ StyleSheets/Custom.css
 ```
+
+github-status
+----------
+Small shell script to wrap curl call to [github status api](http://developer.github.com/v3/repos/statuses/).
+
+```
+github-status -s success -b 231 -o danielMitD -r scripts -c eb66a21c06d85bd327954c1f772a7dc328109912
+```

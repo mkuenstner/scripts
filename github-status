@@ -1,0 +1,65 @@
+#!/bin/bash
+set -e
+
+usage() {
+  cat << EOF
+Usage: $0 -s <status> -b <build id> -o <organisation> -r <repository> -c <sha1 hash> -a <oauth hash>
+
+OPTIONS:
+   -h                Show this message
+   -s <status>       status (pending, success, error, failure)
+   -b <build number> build id
+   -o <organisation> organisation name
+   -r <repository>   repository name
+   -c <commit>       commit sha1 hash
+   -a <auth>         x-oauth-basic hash
+EOF
+}
+
+status_usage() {
+  cat << EOF
+Status must be one of "pending", "success", "error", or "failure".
+
+http://developer.github.com/v3/repos/statuses/
+EOF
+}
+
+STATUS=
+BUILD=
+ORG=
+REPO=
+COMMIT=
+AUTH=
+DESC="is running"
+
+while getopts "hs:b:o:r:c:a:" OPTION; do
+  case $OPTION in
+    h) usage; exit 1;;
+    s) STATUS=$OPTARG;;
+    b) BUILD=$OPTARG;;
+    o) ORG=$OPTARG;;
+    r) REPO=$OPTARG;;
+    c) COMMIT=$OPTARG;;
+    a) AUTH=$OPTARG;;
+    [?]) usage; exit;;
+  esac
+done
+
+# check for required args
+if [[ -z $STATUS ]] || [[ -z $BUILD ]] || [[ -z $ORG ]] || [[ -z $REPO ]] || [[ -z $COMMIT ]] || [[ -z $AUTH ]]; then
+  usage
+  exit 1
+fi
+
+case $STATUS in
+  pending) DESC="build $BUILD is running, stay tuned";;
+  success) DESC="yaaay! build $BUILD succeeded";;
+  failure) DESC="WAT?! what have you done build $BUILD is broken :unamused:";;
+  error) DESC="build $BUILD has some errors. please watch it!";;
+  [?]) status_usage; exit;;
+esac
+
+curl -X POST -sS \
+     -u $AUTH:x-oauth-basic \
+     --data "{\"state\":\"$STATUS\", \"description\":\"\"}" \
+     https://api.github.com/repos/$ORG/$REPO/statuses/$COMMIT
