@@ -1,0 +1,20 @@
+#!/bin/zsh
+
+autoload colors ; colors
+
+SVN=/usr/local/bin/svn
+URL=`$SVN info | grep 'Repository Root' | awk '{print $NF}'`
+BRANCH=$1
+
+if [[ "trunk" = "$BRANCH" ]]; then
+	echo "$fg[yellow]Switching to trunk."
+	echo "URL: $URL/trunk$reset_color"
+	$SVN switch "$URL/trunk"
+else
+	echo "$fg[yellow]Switching to branch: $BRANCH"
+	echo "URL: $URL/branches/$BRANCH$reset_color"
+	$SVN switch "$URL/branches/$BRANCH"
+fi
+
+echo ""
+echo "$fg[green]done : )$reset_color"

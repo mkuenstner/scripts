@@ -1,0 +1,62 @@
+#!/bin/zsh
+
+autoload colors ; colors
+
+SVN=/usr/local/bin/svn
+URL=`$SVN info | grep 'Repository Root' | awk '{print $NF}'`
+
+parse_options()
+{
+    o_branch=(-b trunk)
+    o_merge=(-m)
+    o_rev=(-r)
+
+    zparseopts -K -- b:=o_branch m:=o_merge h=o_help r:=o_rev d=o_dry
+    if [[ $? != 0 || "$o_help" != "" ]]; then
+        echo Usage: $(basename "$0") "-m merge [-r rev] [-b branch] [-d]"
+        exit 1
+    fi
+
+    branch=$o_branch[2]
+    merge=$o_merge[2]
+    revision=$o_rev[2]
+
+    dryrun=
+    if [[ $o_dry != "" ]]; then dryrun="--dry-run"; fi
+}
+# now use the function:
+parse_options $*
+
+if [[ $revision -lt 1 ]]; then
+    echo ""
+    echo "$fg[red]no revision given, try to find one in the following output$reset_color"
+    echo "$fg[yellow]first commits in $fg_bold[yellow]$merge$reset_color"
+    $SVN log "$URL/branches/$merge" --stop-on-copy | tail
+    exit 1
+fi
+
+if [[ "trunk" = "$branch" ]]; then
+    echo "$fg[yellow]Switching to base branch: $fg_bold[yellow]trunk$reset_color"
+    echo "URL: $URL/trunk$reset_color"
+    $SVN switch "$URL/trunk"
+else
+    echo "$fg[yellow]Switching to base branch: $fg_bold[yellow]$branch$reset_color"
+    echo "URL: $URL/branches/$branch$reset_color"
+    $SVN switch "$URL/branches/$branch"
+fi
+
+echo "$fg[yellow]Merging branch: $fg_bold[yellow]$merge$fg_no_bold[yellow] from revision $fg_bold[yellow]$revision$reset_color"
+torev=`$SVN merge $dryrun -r$revision:HEAD "$URL/branches/$merge" | tee /dev/tty | grep "Merging r" | awk '{print $5}'`
+
+echo ""
+
+if [[ $dryrun != "" ]]; then echo -n "$fg[green]dryrun - "; fi
+echo "$fg_bold[green]done : )$reset_color"
+
+if [[ $dryrun == "" ]]; then
+    echo ""
+    echo "commit merge using ($fg_bold[white]already copied to clipboard$reset_color):"
+    echo -n "svn ci -m \"merge: $merge > $branch (r$revision:$torev)\"" | tee /dev/tty | pbcopy
+    echo -e "\n\ndelete branch using:"
+    echo "svn rm $URL/branches/$merge -m \"delete branch: $merge\""
+fi
