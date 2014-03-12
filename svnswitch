@@ -2,7 +2,7 @@
 
 autoload colors ; colors
 
-SVN=/usr/local/bin/svn
+SVN=`which svn`
 URL=`$SVN info | grep 'Repository Root' | awk '{print $NF}'`
 BRANCH=$1
 
