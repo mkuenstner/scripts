@@ -18,7 +18,7 @@ for PROJECT in $PROJECTS; do
     workdir="$MAIN_PATH/$PROJECT"
     gitdir="$MAIN_PATH/$PROJECT/.git"
 
-    echo "this are $fg[yellow]$PROJECT's$reset_color branches"
+    echo "$fg[yellow]$PROJECT's$reset_color branches:"
     $GIT --git-dir=$gitdir --work-tree=$workdir branch
     echo
 done

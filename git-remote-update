@@ -19,5 +19,9 @@ for PROJECT in $PROJECTS; do
     gitdir="$MAIN_PATH/$PROJECT/.git"
 
     echo "update $fg[yellow]$PROJECT$reset_color"
-    $GIT --git-dir=$gitdir --work-tree=$workdir remote update
+    $GIT --git-dir=$gitdir --work-tree=$workdir remote update -p
+
+    if [[ "$1" = "--merge" ]]; then
+        $GIT --git-dir=$gitdir --work-tree=$workdir merge --ff-only @{u}
+    fi
 done
