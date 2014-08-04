@@ -6,11 +6,15 @@ GIT=`which git`
 MAIN_PATH="/srv/httpd"
 PROJECTS=(
     elasticsearch-php-bundle
+
     unity-backend-core
     unity-backend-ictcareer
+    unity-backend-jobs
     unity-backend-jsm
-    unity-backend-vertical
+
+    unity-frontend-common
     unity-frontend-ictcareer
+    unity-frontend-jobs
     unity-frontend-jsm
 )
 
@@ -19,9 +23,11 @@ for PROJECT in $PROJECTS; do
     gitdir="$MAIN_PATH/$PROJECT/.git"
 
     echo "update $fg[yellow]$PROJECT$reset_color"
-    $GIT --git-dir=$gitdir --work-tree=$workdir remote update -p
+    $GIT --git-dir=$gitdir --work-tree=$workdir remote update --prune
 
     if [[ "$1" = "--merge" ]]; then
         $GIT --git-dir=$gitdir --work-tree=$workdir merge --ff-only @{u}
     fi
+
+    echo ""
 done

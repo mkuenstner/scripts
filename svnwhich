@@ -3,9 +3,9 @@
 autoload colors ; colors
 
 SVN=`which svn`
-PROJECTS=(api.jobs.ch img.jobs.ch/www imgv.jobs.ch kombi.jobs.ch library offene.jobs.ch verticals wordpress.jobs.ch www.jobs.ch www.stellen.ch www.topjobs.ch zf.jobs.ch)
+PROJECTS=(api.jobs.ch img.jobs.ch/www imgv.jobs.ch kombi.jobs.ch library verticals wordpress.jobs.ch www.jobs.ch www.stellen.ch www.topjobs.ch zf.jobs.ch)
 
 for PROJECT in $PROJECTS; do
-    BRANCH=`$SVN info /srv/httpd/$PROJECT | grep 'URL: ' | awk '{n=split($0,a,"/"); print a[n]}'`
+    BRANCH=(`$SVN info /srv/httpd/$PROJECT | grep 'URL: ' | awk '{n=split($0,a,"/"); print a[n]}' | tail -n1`)
     echo "$PROJECT: $fg[yellow]$BRANCH$reset_color"
 done
