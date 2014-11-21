@@ -1,0 +1,44 @@
+#!/bin/zsh
+autoload colors ; colors
+repo=$1
+
+. ~/.githelper
+
+names=("${(@f)$(curl -XGET -s -u$_git_auth https://api.github.com/repos/$_git_org/$repo/branches | jq -r '.[].name')}")
+refs=`curl -XGET -s -u$_git_auth https://api.github.com/repos/$_git_org/$repo/pulls | jq -r '.[].head.ref'`
+
+for branch in $names; do
+  if [[ $branch != 'develop' ]] && [[ $branch != 'master' ]]; then
+    # check if there is a pull request for $branch
+    if [[ $refs != *$branch* ]]; then
+      echo "no pull request for $fg[red]$branch$reset_color"
+
+      read create\?"create one [y/N]: "
+      if [[ $create != "y" ]]; then
+        continue
+      fi
+
+      pullname=${${branch#feature/}//-/ }
+      read title\?"title [$pullname]: "
+      if [[ $title = "" ]]; then
+          title="$pullname"
+      fi
+
+      read base\?"base [develop]: "
+      if [[ $base = "" ]]; then
+          base="develop"
+      fi
+
+      echo "create pull request for $branch with \"$fg[green]$title$reset_color\"";
+      number=`curl -XPOST -s -u$_git_auth https://api.github.com/repos/$_git_org/$repo/pulls -d "
+      {
+        \"title\": \"$title\",
+        \"head\": \"$branch\",
+        \"base\": \"$base\"
+      }
+      " | jq '.number'`
+
+      echo "$fg[green]created #$number$reset_color\n";
+    fi
+  fi
+done
