@@ -51,11 +51,11 @@ merge_branches() {
 composer_update() {
     echo -n "[....] composer.lock\r"
 
-    # remove current version
+    # remove current version (faster?)
     rm -rf composer.lock vendor
 
     # update everything
-    composer update --no-progress --quiet --no-interaction --no-plugins
+    composer update --no-progress --quiet --no-interaction
 
     if git diff-index --quiet HEAD --; then
         git ci -am'chore(composer): update composer.lock'
@@ -69,7 +69,6 @@ push=0
 composer=0
 head="develop"
 base="master"
-
 
 while getopts "h:b:cp" OPTION; do
   case $OPTION in
