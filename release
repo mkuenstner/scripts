@@ -92,6 +92,6 @@ if [[ $composer = 1 ]]; then
 fi
 
 need_push=(`git rev-list origin/$base..$base --count`)
-if [[ $push ]] && [[ $need_push ]]; then
+if [[ $push = 1 ]] && [[ $need_push != 0 ]]; then
     git push origin $base
 fi
