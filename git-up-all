@@ -1,0 +1,35 @@
+#!/bin/zsh
+
+autoload colors ; colors
+
+GIT=`which git`
+folders=(/srv/modules /srv/httpd)
+git_dirs=()
+
+# check for git up command
+git up --version > /dev/null 2>&1 || \
+  (echo "$fg[red]error$reset_color: git-up is required (https://github.com/aanand/git-up)\n" && exit 1)
+
+update()
+{
+  output=`$GIT --git-dir=$1/.git --work-tree=$1 up`
+  echo "update $fg[yellow]$1$reset_color:"
+  echo "$output\n"
+}
+
+# find git folders in project directories
+for folder in $folders; do
+  for dir in $(find "$folder" -maxdepth 3 -mindepth 2 -type d -name .git); do
+      git_dirs+=(${dir/\/.git/})
+  done
+done
+
+echo "found $fg[yellow]${#git_dirs}$reset_color directories.\n"
+
+# update all directories
+for directory in $git_dirs; do
+  update $directory & # "&" fork of to be faster
+done
+
+# wait for all forked jobs
+wait
