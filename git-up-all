@@ -1,26 +1,33 @@
 #!/bin/zsh
 
+# make it beautiful
 autoload colors ; colors
 
 GIT=`which git`
-folders=(/srv/modules /srv/httpd)
-git_dirs=()
+
+folders=(/srv/modules /srv/httpd ~) # entry points for git folder search
+git_dirs=()                         # git directories
+maxdepth=3                          # folder depth for entry points
 
 # check for git up command
 git up --version > /dev/null 2>&1 || \
-  (echo "$fg[red]error$reset_color: git-up is required (https://github.com/aanand/git-up)\n" && exit 1)
+  echo "$fg[red]error$reset_color: git-up is required (https://github.com/aanand/git-up)\n" && exit 1
 
 update()
 {
-  output=`$GIT --git-dir=$1/.git --work-tree=$1 up`
+  output=`$GIT --git-dir=$1/.git --work-tree=$1 up 2>&1`
   echo "update $fg[yellow]$1$reset_color:"
   echo "$output\n"
 }
 
 # find git folders in project directories
 for folder in $folders; do
-  for dir in $(find "$folder" -maxdepth 3 -mindepth 2 -type d -name .git); do
+  for dir in $(find "$folder" -maxdepth $maxdepth -mindepth 2 -type d -name .git); do
+    if [[ ! -z $(git --git-dir=$dir remote) ]]; then
       git_dirs+=(${dir/\/.git/})
+    else
+      echo "skip $dir"
+    fi
   done
 done
 
