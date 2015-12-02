@@ -10,8 +10,11 @@ git_dirs=()                         # git directories
 maxdepth=3                          # folder depth for entry points
 
 # check for git up command
-git up --version > /dev/null 2>&1 || \
-  echo "$fg[red]error$reset_color: git-up is required (https://github.com/aanand/git-up)\n" && exit 1
+git up --version &> /dev/null
+if [ $? -eq 1 ]; then
+  echo "$fg[red]error$reset_color: git-up is required (https://github.com/aanand/git-up)\n"
+  exit 1
+fi
 
 update()
 {
